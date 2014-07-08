@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block body %}
+<div id="response" class="alert hide"></div>
+<div class="page-header">
+	<h1>1. Pay</h1><small>Select a payment method.You cannot combine cash purchases.</small>
+</div>
+
+
+{% if data.payment_methods.cash.max %}
+<div data-selected="false" type="cash" id="cash" class="alert alert-success payment_method noroundbtn btn btn-sm btn-info">Pay with cash (Max of ${{data.payment_methods.cash.max}})
+	<span class="glyphicon glyphicon-ok hide"></span>
+</div>
+{% endif %}
+{% for credit_card in data.payment_methods.credit_card %}
+<div data-selected="false" type="credit_card" id="{{credit_card.id}}" class="alert alert-info payment_method noroundbtn btn btn-sm btn-info">{{credit_card.cc_type}} Last Four Digits: {{credit_card.last_four}}
+	<span class="glyphicon glyphicon-ok hide"></span>
+
+</div>
+{% endfor %}
+
+{% for promo in data.payment_methods.promo %}
+<div data-selected="false" type="promo" id="{{promo.id}}" class="alert alert-warning payment_method noroundbtn btn btn-sm btn-info">{{promo.name}}
+	<span class="glyphicon glyphicon-ok hide"></span>
+
+</div>
+{% endfor %}
+{% for credit in data.payment_methods.credit_balance %}
+<div data-selected="false" type="credit_balance" id="{{credit.id}}" class="alert alert-warning payment_method noroundbtn btn btn-sm btn-info">{{promo.name}}
+	<span class="glyphicon glyphicon-ok hide"></span>
+</div>
+{% endfor %}
+<div class="page-header">
+	<h1>2. Confirm</h1>
+</div>
+<div class="jumbotron">
+	<h3>Number of Items: {{cart.item_count}}</h3>
+	<ul class="list-unstyled">
+		{% for item in cart.cart %}
+		<li>- {{item.name}}-${{item.price}}</li>
+		{% endfor %}
+	</ul>
+	<h3>Subtotal: ${{cart.subtotal}}</h3>
+	<h3>Tax: ${{cart.tax}}</h3>
+	<h3>Total: ${{cart.total}}</h3>
+	<button type="button" class="btn btn-default btn-md order">
+		<span class="glyphicon glyphicon-shopping-cart"></span> order
+	</button>
+	<small class="message hide"></small>
+
+</div>
+<script>
+var payments = new Array();
+$('.order').prop('disabled', false);
+$( ".order" ).click(function() {
+	btn = $(this);
+
+	$(".payment_method").each(function(index, value) {
+		if($(this).data('selected') === 'true'){
+			console.log($(this).id);
+			switch($(this).attr('type')){
+				case "cash":
+				payments.push({'type':'cash'});
+				break;
+				case "credit_card":
+				payments.push({'type':'credit_card', 'id':this.id});
+				break;
+				case "promo":
+				payments.push({type:'promo',id:this.id});
+				break;
+				case "credit_balance":
+				payments.push({type:'cash',id:this.id});
+				break;
+			}
+			btn.prop('disabled', true);
+			console.log(JSON.stringify(payments));
+			$.ajax({
+				type: 'POST',
+            // Provide correct Content-Type, so that Flask will know how to process it.
+            contentType: 'application/json',
+            // Encode data as JSON.
+            data: JSON.stringify(payments),
+            // This is the type of data expected back from the server.
+            //dataType: 'json',
+            url: "{{request.url}}"
+        }).done(function(data) {
+        	$("#response").removeClass('alert-info');
+        	$("#response").removeClass('alert-danger');
+        	console.log(data);
+        	console.log("HELLO");
+        	if(data.message[0].code === "ok"){
+        		$("#response").addClass('alert-info');
+        		$("#response").show("slow");
+        		$("#response").text(data.message[0].user_msg + "Order Id: " + data.message[0].order_id + ". Points Added: " + data.message[0].delivery_points);
+        	}else{
+        		$("#response").addClass('alert-danger');
+        		$("#response").show("slow");
+        		$("#response").text("Error: " + data.message[0].user_msg);
+        		$('.order').prop('disabled', false);
+        	}
+        	$("html, body").animate({ scrollTop: 0 }, "slow");
+
+        });
+    }
+});
+});
+$( ".payment_method" ).click(function() {
+	if($(this).data('selected') === 'true'){
+		console.log("FOO");
+		$(this).data('selected', 'false');
+		$(this).find('span').hide("slow");
+	}
+	else
+	{
+		console.log("POO");
+		$(this).data('selected', 'true');
+		$(this).find('span').show("slow");
+	}
+});
+</script>
+{% endblock %}

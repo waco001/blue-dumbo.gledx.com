@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block body %}
+
+<!-- Services -->
+<div class="container">
+
+	<section id="services" class="home-section bg-white">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-offset-2 col-md-8">
+					<div class="section-heading">
+						<h2>Bluedumbo</h2>
+						<p>We offer an easy way to order food so you can focus less on the thinking and more on the enjoying.</p>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+					<div class="service-box wow bounceInDown" data-wow-delay="0.2s">
+						<h1><span class="glyphicon glyphicon-road"></span></h1>
+						<h4>Order Delivery or Pickup</h4>
+						<p>Choose from a variety of different cuisines, and menus and get it shipped right to your front door!</p>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+					<div class="service-box wow bounceInDown"  data-wow-delay="0.2s">
+						<h1><span class="glyphicon glyphicon-facetime-video"></span></h1>
+						<h4>Social Media Integration</h4>
+						<p>Take 'selfies' with your meals and make your friends jealous of your exquisite tastes.</p>
+						<p>If you're lucky, you may even see your picture on our <a href="{{url_for('social')}}">Instagram Page</a></p>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-2 col-lg-4">
+					<div class="service-box wow bounceInDown"  data-wow-delay="0.2s">
+						{% if not session.access_token %}
+						<h1><span class="glyphicon glyphicon-thumbs-up"></span></h1>
+						<h4>Whatcha Waitin' For?!</h4>
+						<p>If Your're amazed, just register, or keep browsing down.</p>
+						<div class="row">
+							<a href="https://sandbox.delivery.com/third_party/account/create?client_id=YWExYjcwMGQ5YjZhMzE3OGExMzY4ZGU0OGRkYmExNGI3&redirect_uri=http://bluedumbo.gledx.com&response_type=code&scope=global" class="btn btn-primary">Register</a>
+							<a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+						</div>
+						{% else %}
+						<span class="glyphicon glyphicon-thumbs-up" style="font-size: 5em;"></span>
+						{% endif %}
+						<p>We are proud to use the Delivery.com API to bring a more useful food ordering tool</p>
+						<img src="http://upload.wikimedia.org/wikipedia/en/f/ff/Delivery.com_Logo.png" width="100%" height="100%" />
+
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+					<div class="service-box wow bounceInDown"  data-wow-delay="0.2s">
+						<h1><span class="glyphicon glyphicon-qrcode"></span></h1>
+						<h4>Share With Your Friends</h4>
+						<p>In addition to Instagram photo sharing, share QR Codes for Restaurants, Menus, or even Items! Just send the QR Code to your friend and they can load it with a smartphone!</p>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+					<div class="service-box wow bounceInDown" data-wow-delay="0.2s">
+						<h1><span class="glyphicon glyphicon-gift"></span></h1>
+						<h4>All your freebies in one spot!</h4>
+						<p>Keep track of your Delivery.com Points, restaurant promos, and gift-codes all in one place!</p>
+					</div>
+				</div>
+			</div>	
+		</div>
+	</section> 
+
+	<!-- Contact -->
+	<!--<section id="contact" class="home-section bg-white">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-offset-2 col-md-8">
+					<div class="section-heading">
+						<h2>Contact us</h2>
+						<p>Contact via form below and we will be get in touch with you soon. </p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-offset-1 col-md-10">
+
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<div class="col-md-offset-2 col-md-8">
+								<input type="text" class="form-control" id="inputName" placeholder="Name">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-md-offset-2 col-md-8">
+								<input type="email" class="form-control" id="inputEmail" placeholder="Email">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-md-offset-2 col-md-8">
+								<input type="text" class="form-control" id="inputSubject" placeholder="Subject">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-md-offset-2 col-md-8">
+								<textarea name="message" class="form-control" rows="3" placeholder="Message"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-md-offset-2 col-md-8">
+								<button type="button" class="btn btn-theme btn-lg btn-block">Send message</button>
+							</div>
+						</div>
+					</form>
+
+				</div>
+
+				
+			</div>-->
+			<div class="row mar-top30 ">
+				<div class="col-md-offset-2 col-md-8">
+					<h5>We're on social networks</h5>
+					<ul class="social-network wow wobble">
+						<li><a href="https://www.facebook.com/BluedumboOrdering/">
+							<span class="fa-stack fa-2x">
+								<i class="fa fa-circle fa-stack-2x"></i>
+								<i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+							</span></a>
+						</li>
+						<li><a href="https://twitter.com/waco001">
+							<span class="fa-stack fa-2x">
+								<i class="fa fa-circle fa-stack-2x"></i>
+								<i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+							</span></a>
+						</li>
+						<li><a href="http://www.instagram.com/bluedumbo">
+							<span class="fa-stack fa-2x">
+								<i class="fa fa-circle fa-stack-2x"></i>
+								<i class="fa fa-instagram fa-stack-1x fa-inverse"></i>
+							</span></a>
+						</li>
+					</ul>
+				</div>				
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

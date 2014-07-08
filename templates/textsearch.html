@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block body %}
+{% if form %}
+<div class="row">
+	<div class="col-md-12">
+		{% if user is not defined%}
+		<p class="bg-warning">
+			Please add an address in the <a href="{{ url_for('settings') }}">Settings</a>
+		</p>
+		{% endif %}
+	</div>
+	<div class="col-md-offset-2 col-md-6">
+		<form action="{{ request.url }}" method="GET">
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-12">
+
+					<span class="input-group-addon">
+						<label>Your Address: </label>
+						<select id="locationid" name="locationid" class="form-control">
+							{% for location in user.locations %}
+								<option value="{{ location.location_id }}">{{ location.street|title }}, {{ location.city|title }} {{ location.zip_code }}</option>
+							{% endfor %}
+						</select>
+					</span>
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-12">
+					<span class="input-group-addon">
+						<label>Select Your Delivery Method:</label>
+					</span>
+				</div>
+				<div class="col-md-offset-2 col-md-12">
+					<span class="input-group-addon">
+						<input type="radio" name="method" value="delivery" required> Delivery</input>
+					</span>
+					<span class="input-group-addon">
+
+						<input type="radio" name="method" value="pickup"> Pickup</input>
+					</span>
+
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-12">
+
+					<span class="input-group-addon">
+						<label>Sort By: </label>
+						<select id="sort" name="sort" class="form-control" required>
+							<option value="distance">Distance</option>
+							<option value="rating">Rating</option>
+						</select>
+					</span>
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-12">
+					<button type="submit" class="btn btn-theme btn-lg btn-block" style="margin-bottom:25px;">Submit</button>
+				</div>
+			</div>
+		</form>
+
+	</div>
+</div>
+
+{% else %}
+
+{% if data.message %}
+<h3>{{data.message[0].user_msg}}</h3>
+{% else %}
+<div class="row">
+	{#Enter Stuff Here For when success #}
+	<div class="bg-primary">
+	{%- for vertical in data.verticals -%}
+	[
+	{{ vertical.label }}s: {{ vertical.count }}
+	]
+	{%- endfor -%}
+	</div>
+
+	{%- for restaurant in data.merchants -%}
+	{% set currentRestaurant = restaurant %}
+	<div class="col-xs-12">
+		<div class="searchitem"> 
+			<img src="https://www.delivery.com/merchant_logo.php?id={{restaurant.id}}"  alt="Google Logo" />
+			<p>{{restaurant.summary.name}} - {{restaurant.id}}</p>
+			<div class="row">
+
+				<ul class="textsearch-list">
+					<li class="experimental">
+						{{restaurant.summary.cuisines}}
+					</li>
+					<li>
+						{{restaurant.location.distance|round}} mi.
+					</li>
+					<li>
+						<div class=
+						{% if restaurant.summary.overall_rating <= 25 %}
+						"restaurant restaurant_bad"
+						{% elif restaurant.summary.overall_rating <= 50 %}
+						"restaurant restaurant_medium"
+						{% elif restaurant.summary.overall_rating <= 75 %}
+						"restaurant restaurant_good"
+						{% elif restaurant.summary.overall_rating <= 100 %}
+						"restaurant restaurant_great"
+						{% endif %}
+						{{ restaurant.summary.overall_rating }} / {{restaurant.summary.num_ratings}}</div>
+					</li>
+					<li>
+						<a href="{{ url_for('viewmerchants') }}?merchant_id={{ restaurant.id }}&search_address={{ searchaddress }}&method={{ method }}">Order</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	{%- endfor -%}
+</div>
+{% endif %}
+{% endif %}
+
+{% endblock %}

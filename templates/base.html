@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Blue Dumbo</title>
+	<meta charset="utf-8" />
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	<!-- css -->
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" media="screen">
+	<link href="{{ url_for('static', filename='color/default.css') }}" rel="stylesheet" media="screen">
+	<script src="{{ url_for('static', filename='js/modernizr.custom.js') }}"></script> 
+	<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+
+
+
+	{% if qrcode %}
+	<script src="{{ url_for('static', filename='js/jquery.qrcode.min.js') }}"></script>
+	{% endif %}
+	
+	{% if editabletable %}
+	<script src="{{ url_for('static', filename='js/editabletable.js')}}"></script>
+	<script src="{{ url_for('static', filename='js/editaddress.js')}}"></script>
+	<script>
+	window.userPostAddress = "{{ url_for('userPostAddress') }}"; //For when posting table stuff
+	</script>
+
+	{% endif %}
+
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+</head>
+<body>
+	<div class="menu-area">
+		<div id="dl-menu" class="dl-menuwrapper">
+			<button class="dl-trigger">Open Menu</button>
+			<ul class="dl-menu">
+
+				{% for name,properties in config.SITE_NAVIGATION.items() %}
+				<li>
+					<a alt="name" href="{{ url_for('index') }}{{ properties.href }}">{{ properties.text }}</a>
+				</li>
+				{% endfor %}
+				<li>
+					<a href="#">Account</a>
+					{% if session.LOGGED_IN %}
+					<ul class="dl-submenu">
+						<li>Welcome, You Are Logged In.</li>
+						<li><a href="{{url_for('settings')}}">Settings</a></li>
+						<li><a href="{{url_for('logout')}}">Logout</a></li>
+					</ul>
+					{% else %}
+					<ul class="dl-submenu">
+						<li><a href="{{url_for('login')}}">Login</a></li>
+						<li><a href="#">Register</a></li>
+					</ul>
+					{% endif %}
+				</li>
+			</ul>
+		</div><!-- /dl-menuwrapper -->
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+		{% for category, message in messages %}
+		<div class="info message"> <!-- Messages -->
+			<h3>{{ category }}</h3>
+			<p>{{ message }}</p>
+			<button type="button" class="btn btn-default btn-lg removeflashmsg">
+				<span class="glyphicon glyphicon-remove "></span>
+			</button>
+		</div>
+		{% endfor %}
+		{% endif %}
+		{% endwith %}
+	</div>		  
+	<!-- About -->
+	<section id="about" class="bg-lightlightblue">
+		<div class="container">
+			<div class="container-fluid row">
+				<div class="col-md-offset-2 col-md-8">
+					<h5>Bluedumbo.gledx.com</h5>
+					<p>Blue Dumbo changes the way you order your food.</p>
+				</div>
+			</div>
+			{% if home %}
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+					<div class="box-team wow bounceInDown" data-wow-delay="0.1s">
+						<h4>Speedy and Secure</h4>
+						<p>Using the crazy cool Delivery.com API, you can now order delicious stomach-churning entrées, courses, deserts, and more!</p>
+						<p>Scour through local businesses and combine special deals all in one place! Finally, you can checkout securely through the Delivery Checkout API.</p>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" data-wow-delay="0.3s">
+					<div class="box-team wow bounceInDown">
+						<h4>Non-Technical?</h4>
+						<h5>We gotcha bro (and gals)</h5>
+						<p>Use the familiar Google Places to read reviews of nearby restaurants from your mobile and computer!</p>
+						<p>Save restaurants as favorites, so you can can easily access them at a later time!</p>
+					</div>
+				</div>
+			</div>	
+			{% endif %}
+			
+		</div>	  
+	</section>
+	{% block body %}{% endblock %}
+</body>
+<footer class="pagefooter">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<p>Copyright &copy;2014 Blue Dumbo. All rights reserved.</p>
+			</div>
+		</div>		
+	</div>	
+</footer>
+<!--By <a href="http://bootstraptaste.com">Bootstraptaste</a>-->
+<!-- js -->
+<script>
+$( ".removeflashmsg" ).on( "click", function() {
+	$(this).parent().hide();
+});
+</script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.smooth-scroll.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.dlmenu.js') }}"></script>
+<script src="{{ url_for('static', filename='js/wow.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+
+</html>

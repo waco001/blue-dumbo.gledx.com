@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="row">
+	<div class="col-md-offset-2 col-md-8">
+		<div class="table-responsive">
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Last Four Digits</th>
+						<th>Expiry Date</th>
+						<th style="display: none;">
+						</tr>
+					</thead>
+					<tbody>
+						{%- for cc in data.cards -%}
+						<tr>
+
+							<td>{{cc.type}}</td>
+							<td>{{cc.last_four}}</td>
+							<td>{{cc.exp_month}}/{{cc.exp_year}}</td>
+							<td style="display: none;"> {{cc.cc_id}}</td>
+						</tr>
+
+						{% endfor %}
+
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-offset-2 col-md-8">
+			<a href="{{url}}"><button type="button" class="btn btn-default">Add Credit Card</button></a>
+		</div>
+	</div>
+	{% endblock %}

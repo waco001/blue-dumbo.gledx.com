@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="row">
+	<div class="col-md-offset-3 col-md-6">
+		<h1>Settings</h1>
+		<div class="btn-group">
+			<a href="{{ url_for('settingseditaddress') }}"><button type="button" class="btn btn-default">Edit Your Addresses</button></a>
+		</div>
+	</div>
+	<div class="col-md-offset-3 col-md-6">
+		<div class="btn-group">
+			<a href="{{ url_for('settingseditfavorites') }}"><button type="button" class="btn btn-default">Edit Your Favorite Merchants</button></a>
+		</div>
+	</div>
+	<div class="col-md-offset-3 col-md-6">
+		<div class="btn-group">
+			<a href="{{ url_for('settingseditcreditcards') }}"><button type="button" class="btn btn-default">Credit Cards</button></a>
+		</div>
+	</div>
+</div>
+{% endblock %}

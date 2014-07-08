@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="row">
+	<div class="col-md-12">
+		{%- if data.message -%}
+		<div class="row well">
+			{{ data.message[0].user_msg }}
+		</div>
+		{%- else -%}
+		<div class="row">
+			<div class="col-md-offset-2 col-md-8 well">
+
+				{%- for favemerchant in data.merchants -%}
+				<div id="{{ favemerchant.merchant_id }}" class="searchitem"> 
+					<div class="col-md-6">
+						<div class="row">
+							{{ favemerchant.name }}
+						</div>
+						<div class="row">
+
+							<a href="{{ url_for('ordermerchants') }}?id={{favemerchant.merchant_id}}&method=pickup">
+								<button type="button" class="btn-sm btn-success">Order</button>
+							</a>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="row">
+							<button id="{{ favemerchant.merchant_id }}" type="button" class="btn btn-default btn-sm favebutton">
+								<span class="glyphicon glyphicon-heart alert-danger"></span>
+							</button>
+						</div>
+					</div>
+				</div>
+				{%- endfor -%}
+			</div>
+		</div>
+		{%- endif -%}
+	</div>
+</div>
+<script>
+$(".favebutton").click(function(){
+	console.log("HHELO");
+	thisid=this.id;
+	$('#' + thisid).hide('slow');
+	$.post( "{{url_for('togglefavoritemerchant')}}", { merchantid: thisid})
+	.done(function( data ) {
+		if(data=="False"){
+			console.log('Merchant Removed');
+		}
+	});
+});
+</script>
+{% endblock %}

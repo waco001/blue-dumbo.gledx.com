@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block body %}
+<html>
+<head>
+	<title>Map</title>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+	<meta charset="utf-8">
+	<style>
+	html, body, #map-canvas {
+		height: 100%;
+		margin: 0px;
+		padding: 0px
+	}
+	</style>
+	<script>
+	var map;
+	function initialize() {
+		var mapOptions = {
+			zoom: 8,
+			center: new google.maps.LatLng(-34.397, 150.644),
+			mapTypeControl: false,
+			mapTypeControlOptions: {
+				style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+				position: google.maps.ControlPosition.BOTTOM_CENTER
+			},
+			panControl: true,
+			panControlOptions: {
+				position: google.maps.ControlPosition.TOP_RIGHT
+			},
+			zoomControl: true,
+			zoomControlOptions: {
+				style: google.maps.ZoomControlStyle.LARGE,
+				position: google.maps.ControlPosition.TOP_RIGHT
+			},
+			scaleControl: true,
+			streetViewControl: true,
+			streetViewControlOptions: {
+				position: google.maps.ControlPosition.TOP_RIGHT
+			}
+
+		};
+
+
+		var map = new google.maps.Map(document.getElementById('map-canvas'),
+			mapOptions);
+		var positionLat;
+		var positionLong;
+		var initialLocation;
+		// Try W3C Geolocation (Preferred)
+		if(navigator.geolocation) {
+			browserSupportFlag = true;
+			navigator.geolocation.getCurrentPosition(function(position) {
+				positionLat = position.coords.latitude;
+				positionLong = position.coords.longitude;
+				initialLocation = new google.maps.LatLng(positionLat, positionLong);
+				map.setCenter(initialLocation);
+				map.setZoom(12);
+
+
+
+
+				var image = "{{ url_for('static', filename='img/googlemaps/house.png') }}";
+				var myLatLng = initialLocation;
+				var beachMarker = new google.maps.Marker({
+					position: myLatLng,
+					map: map,
+					icon: image
+				});
+			}, function() {
+				handleNoGeolocation(browserSupportFlag);
+			});
+		}
+
+
+	}
+	function handleNoGeolocation(errorFlag) {
+		if (errorFlag == true) {
+			alert("Geolocation service failed.");
+			initialLocation = newyork;
+		} else {
+			alert("Your browser doesn't support geolocation. We've placed you in Siberia.");
+			initialLocation = siberia;
+		}
+		map.setCenter(initialLocation);
+
+	}
+
+	function loadScript() {
+		
+		window.location = "#map";
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = 'https://maps.googleapis.com/maps/api/js?key={{GOOGLEMAPSAPI_KEY}}&sensor={{GOOGLEMAPS_USESENSOR}}&' +
+		'callback=initialize';
+		document.body.appendChild(script);
+	}
+	function setMapHeighttoButtonHeight(){
+		getElementById('map-canvas').style.height=getElementById('startMapButton').style.height
+	}
+	window.onLoad = setMapHeighttoButtonHeight;
+
+	</script>
+</head>
+<body>
+	<div id='map-canvas' style="width: 100%;">
+		<section id="map" />
+		<div class="row">
+			<a onClick="loadScript()" id="startMapButton" class="btn btn-primary">Start</a>
+		</div>
+	</div>
+</body>
+
+{% endblock %}

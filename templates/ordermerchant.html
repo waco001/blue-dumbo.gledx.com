@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block body %}
+<br>
+<div class="container-fluid">
+	{% if data.item %}
+	<!-- Must be an item or simplified menu -->
+	<h3>{{data.item[0].name|safe}}</h3>
+	<h6>{{data.item[0].price}}</h6>
+	<hr>
+	{% if data.item[0].type == "menu" %}
+	<ul class="list-group">
+
+		{%- for child in data.item[0].children -%}
+		<a href="{{url_for('viewmenu')}}?id={{request.args.id}}&menuid={{child.id}}">
+			<li class="list-group-item">
+				<span class="badge">></span>
+				{{child.name|safe}}
+			</li>
+		</a>
+		{%- endfor -%}
+	</ul>
+	{% elif data.item[0].type == "item"%}
+
+	{% if data.item[0].children[0] %}
+	This Item Is Available: 
+	{% for schedule in data.schedule %}
+	{% for itemschedule in data.item[0].schedule %}
+	{% if schedule.id == itemschedule %}
+	{% for time in schedule.times %}
+	{{schedule}}
+	{% endfor %}
+	{% endif %}
+	{% endfor %}
+	{% endfor %}
+	{% for optiongroup in data.item[0].children %}
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">{{optiongroup.name|safe}}</h3>
+		</div>
+		<div class="panel-body">
+			{% if optiongroup.description %}
+			{{ optiongroup.description }}
+			<hr>
+			{% endif %}
+			<form id="{{optiongroup.id}}" class="form-horizontal">
+				<div class="maxSelected" id="{{optiongroup.max_selection}}"></div>
+				{% for option in optiongroup.children %}
+				<div class="form-group ">
+					<label class="col-sm-4 control-label">{{option.name|safe}}</label>
+					<div class="col-sm-4">
+						<label>
+							<input id="{{option.id}}" type="checkbox">
+						</label>
+					</div>
+				</div>
+				{% endfor %}
+				<div class="col-sm-12">
+					<button type="button" class="btn sbmt-button btn-default">Submit</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	{% endfor %}
+	{% else %}
+	<button type="button" class="btn buttonwithoutoptions btn-default">Submit</button>
+	{% endif %}
+	<div class="col-sm-12">
+		<img class="buttonloader hide" src="{{ url_for('static', filename='img/loading.gif') }}"/>
+	</div>
+	<span class="responseok glyphicon glyphicon-ok hide"></span>
+	<span class="responsebad glyphicon glyphicon-remove hide"></span>
+	<p id="response-message">
+	</p>
+
+
+	{% endif %}
+	{% else %}
+	<!--MUST BE A BASE MENU -->
+	<ul>
+		{% for menu in data.menu %}
+		<a href="{{url_for('viewmenu')}}?id={{request.args.id}}&menuid={{menu.id}}">
+			<li class="list-group-item">
+				<span class="badge">></span>
+				{{menu.name|safe}}
+			</li>
+		</a>
+		{% endfor %}
+	</ul>
+	{% endif %}
+
+</div>
+<script>
+var option = {};
+$(":checkbox").click(function() {
+	var parentid = $( this ).closest('.form-horizontal').attr('id');
+	var maxSelected = $("#" + parentid + " .maxSelected").attr('id');
+	//console.log(maxSelected);
+	//console.log(parentid);
+	if($("#" + parentid + " :checkbox:checked").length >= maxSelected) {
+		$("#" + parentid + " :checkbox:not(:checked)").prop("disabled", true);
+	} else {
+		$("#" + parentid + " :checkbox").prop("disabled", false);
+	}
+});
+
+
+$(".sbmt-button").click(function(){
+	$(":checkbox:checked").each(function() {
+		thisoption = this.id;
+        option[thisoption] = 1;
+    });
+	console.log(option);
+	var thisid="{{request.args.get('menuid')}}";
+
+	$(".buttonloader").show(" slow ");
+
+	var postdata = {
+		itemid: thisid,
+		merchantid: {{request.args.get('id')}}, 
+		method: "{{session.method}}", 
+		optionid : option
+	}
+	 $.ajax({
+        type: "POST",
+        data :JSON.stringify(postdata),
+        url: "http://bluedumbo.gledx.com/cart/additem",
+        contentType: "application/json"
+    }).done(done);;
+
+});
+$(".buttonwithoutoptions").click(function(){
+	var thisid="{{request.args.get('menuid')}}";
+	console.log(thisid);
+	console.log({ itemid: thisid, merchantid: {{request.args.get('id')}}, method: "{{session.method}}"});
+	$(".buttonloader").show(" slow ");
+	$.post( "http://bluedumbo.gledx.com/cart/additemwithoutoptions", { itemid: thisid, merchantid: {{request.args.get('id')}}, method: "{{session.method}}"})
+	.done(done);
+});
+function done( data ) {
+	$("p#response-message").hide(" slow ");
+	$(".responsebad").hide(" slow ");
+	$(".responseok").hide(" slow ");
+	$("p#response-message").removeClass("bg-danger");
+	$("p#response-message").removeClass("bg-success");
+
+	$(".buttonloader").hide(" slow ");
+	if(data.message === null){
+		$(".responsebad").show(" slow ");
+		$("#response-message").show(" slow ");
+
+		$("p#response-message").addClass("bg-danger");
+		$("p#response-message").text("Error in your selection." + data.message[0].user_msg);
+	}
+	else{
+		$(".responseok").show(" slow ");
+		$("#response-message").show(" slow ");
+
+		$("p#response-message").addClass("bg-success");
+
+		$("p#response-message").text("Success, your total is: " + data.total);
+		
+		console.log(data); 
+		console.log(data.total);
+	}
+}
+</script>
+{% endblock %}

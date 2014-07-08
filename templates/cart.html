@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			{% if session.method is defined %}
+			{% if session.method == "delivery" %}
+			<h2>Pickup</h2>
+			{% else %}
+			<h2>Delivery</h2>
+			{% endif %}
+			<hr>
+			{%endif%}
+		</div>
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-xs-4">
+					Item
+				</div>
+				<div class="col-xs-4">
+					Quantity
+				</div>
+				<div class="col-xs-4">
+					Price
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-md-10 col-md-offset-1">
+					<hr>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12">
+			{% if data.cart[0] is defined %}
+			{% for item in data.cart %}
+			<div class="row well">
+				<div class="col-xs-4">
+					{{item.name}}
+				</div>
+				<div class="col-xs-4">
+					{{item.quantity}}x
+				</div>
+				<div class="col-xs-4">
+					${{item.price}}
+				</div>
+			</div>
+			{% endfor %}
+			{% else %}
+			<div class="col-md-12">
+				<div class="alert alert-danger">No Items In Cart</div>
+			</div>
+			{% endif %}
+			<div class="row alert alert-info">
+				<div class="row">
+					<div class="col-xs-5 col-sm-4 small">
+						{{data.item_count}} <small>items</small>
+					</div>
+					<div class="col-xs-3 col-sm-4">
+						Sub:
+					</div>
+					<div class="col-xs-4 col-sm-4 small">
+						{{data.subtotal}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-5 col-sm-4">
+						<button type="button" id="clearcart" class="btn btn-danger btn-sm">
+							<span class="glyphicon glyphicon-trash"></span> Clear
+						</button>
+					</div>
+					<div class="col-xs-3 col-sm-4">
+						Tax:
+					</div>
+					<div class="col-xs-4 col-sm-4 small">
+						{{data.tax}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-5 col-sm-4">
+						<a href="{{url_for('checkout')}}"> 
+						<button type="button" class="btn btn-info btn-sm">
+							<span class="glyphicon glyphicon-shopping-cart"></span>Pay
+						</button>
+						</a>
+					</div>
+					<div class="col-xs-3 col-sm-4">
+						Total:
+					</div>
+					<div class="col-xs-4 col-sm-4 small">
+						{{data.total}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(document).ready(function(){
+	$('#clearcart').click(function () {
+		$.post("{{url_for('clearcart')}}", {item_index : ""}).done(done);
+    }) // missing end of statement.
+});
+function done( data ) {
+	console.log(data);
+}
+</script>
+{% endblock %}

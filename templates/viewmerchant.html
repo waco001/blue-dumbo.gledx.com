@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block body %}
+
+{% macro rating(rating=0, totalrating=0) -%}
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="well inline-headers">
+			<h3 style="display: inline;">Rating: </h3>
+			{% if rating <= 25 %}
+			<h3 class="text-danger" style="display: inline;"> {{ rating }}</h3>
+			{% elif rating <= 50 %}
+			<h3 class="text-warning" style="display: inline;"> {{ rating }}</h3>
+			{% elif rating <= 75 %}
+			<h3 class="text-info" style="display: inline;"> {{ rating }}</h3>
+			{% elif rating <= 100 %}
+			<h3 class="text-success" style="display: inline;"> {{ rating }}</h3>
+			{% endif %}
+			<h3 style="display: inline;">/{{ totalrating }}</h3>
+		</div>
+	</div>
+</div>
+{%- endmacro %}
+<br>
+<div class="container-fluid">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="well">
+				<a href="{{ url_for('ordermerchants') }}?id={{data.merchant.id}}&method={{ method }}">
+					<button type="button" class="btn btn-success">Order</button>
+				</a>
+				<a id="share"><h4>Share With Friends!</h4></a>
+			</div>
+		</div>
+		<div class="col-md-12 column">
+
+			<div id="qr" class="row well hide">
+				<div id="qrcodeCanvas"></div>
+			</div>
+		</div>
+		<div class="col-md-6 column">
+			<div class="row clearfix">
+				<div class="col-md-3 column">
+					<div class="row">
+						<img style="margin: 0 auto;" class="img-circle img-responsive" width="140px" height="140px" src="https://www.delivery.com/merchant_logo.php?id={{ data.
+						merchant.id }}">
+					</div>
+				</div>
+				<div class="col-md-9 column">
+					<h3 class="text-center text-primary">
+						<a href="{{data.merchant.summary.url.complete}}">{{ data.merchant.summary.name }}</a>
+					</h3>
+					<h4>
+						{{ data.merchant.location.street}}, {{data.merchant.location.city}}
+					</h4>
+					<ul class="list-unstyled list-inline">
+						{%- if reviews.message -%}
+						{{ reviews.message }}
+						{%- else -%}
+						{%- for review in reviews -%}
+						{%- if loop.index > 2 -%}
+						{%- break -%}
+						{%- endif -%} 
+						<blockquote class="blockquote-reverse">
+							<p>{{ review.text|safe}}</p>
+							<footer>
+								<a href="{{review.author_url}}">{{ review.author_name }}</a>
+							</footer>
+						</blockquote>
+						{%- endfor -%}
+						{%- endif -%}
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6 column">
+			<div class="row clearfix">
+				<div class="col-md-12 column">
+					<div class="panel panel-default">
+						{% if session.access_token %}
+						<div class="panel-body">
+							<button type="button" id="favebutton" class="btn btn-default btn-md">
+								{%- if fave == 'True' -%}
+								<span class="glyphicon glyphicon-heart alert-danger"></span>
+								{%- else -%}
+								<span class="glyphicon glyphicon-heart"></span>
+								{%- endif -%}
+							</button>
+						</div>
+						{% endif %}
+						{% if data.merchant.summary.description %}
+						<div class="panel-body">
+							{{ data.merchant.summary.description }}
+						</div>
+						{% endif %}
+						<div class="panel-body">
+							{{ rating(data.merchant.summary.overall_rating, data.merchant.summary.num_ratings) }}
+						</div>
+						<div class="panel-body">
+							{% for cuisine in data.merchant.summary.cuisines %}
+							<div class="well-sm well">{{ cuisine }}</div>
+							{% endfor %}
+						</div>
+						<h4>{{ data.merchant.ordering.time_needed }} Min. Wait Time </h4>
+					</div>
+				</div>
+				<div class="col-md-12 column">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							{% for paymenttype in data.merchant.ordering.payment_types %}
+							<div class="well-sm well">
+								{{ paymenttype|title }}
+							</div>
+							{% endfor %}
+						</div>
+						{% if data.merchant.ordering.specials %}
+						<div class="panel-body">
+
+							{%- for promo in data.merchant.ordering.specials %}
+							<div class="alert alert-info">{{ promo }}</div>
+							{%- endfor -%}
+						</div>
+
+						{% endif %}
+						<div class="panel-body">
+							<h4>Delivery Price Minimum: <span class="label label-default">{{data.merchant.ordering.minimum.delivery}}</span></h4>
+							<h4>Pickup Price Minimum: <span class="label label-default">{{data.merchant.ordering.minimum.pickup}}</span></h4>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+
+		</div>
+	</div>
+</div>
+<script>
+$("#favebutton").click(function(){
+	thisid=this.id
+	$.post( "http://bluedumbo.gledx.com/merchant/togglefavoritemerchant", { merchantid: {{request.args.get('merchant_id')}}})
+	.done(function( data ) {
+		if(data=="True"){
+			$( ".glyphicon-heart" ).addClass( "alert-danger" );
+		}else{
+			$( ".glyphicon-heart" ).removeClass( "alert-danger" )
+		}
+	});
+});
+$("#share").click(function(){
+	$("#qr").toggle("fast");
+});
+$('#qrcodeCanvas').qrcode({width: 250,height: 250,text: "{{request.url}}"});</script>
+{% endblock %}

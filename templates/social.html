@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-offset-1 col-md-10">
+			<h5>Tag your delicious pics of your ordered food with</h5><h4>#deliverycom #bluedumbofood</h4>
+			{% for media in data.data %}
+			<div class="well well-sm">
+				<a href="http://instagram.com/{{media.user.username}}">
+					<img src="{{media.images.standard_resolution.url}}" width="100%" height="100%"/>
+					{{media.user.full_name}}
+				</a>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock %}
